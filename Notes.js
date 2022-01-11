@@ -1,0 +1,87 @@
+let addBtn = document.getElementById("addBtn");
+addBtn.addEventListener("click", function (e) {
+    let addTxt = document.getElementById("addTxt");
+    let notes = localStorage.getItem("notes")
+
+    if (notes == null) {
+        notesObj = [];
+    }
+    else {
+        notesObj = JSON.parse(notes);
+    }
+    notesObj.push(addTxt.value);
+    localStorage.setItem("notes", JSON.stringify(notesObj));
+    addTxt.value = "";
+    showNotes();
+})
+
+showBtn.addEventListener("click", function (e) {
+    showNotes();
+})
+function showNotes() {
+    let notes = localStorage.getItem("notes");
+    if (notes == null) {
+        notesObj = [];
+    }
+    else {
+        notesObj = JSON.parse(notes);
+    }
+
+    let html = "";
+    notesObj.forEach(function (element, index) {
+        html += `
+        <div class="noteCard card my-2 mx-2" style="width: 18rem;">
+        <div class="card-body">
+            <h5 class="card-title">Note ${index + 1}</h5>
+            <p class = "card-text">${element}</p>
+            <button id="${index}" onclick="deleteNote(this.id)" class="btn btn-danger" role="status">Delete Note</button>.
+            <input type="button" name="" onclick="myfun()" value="Make Private">
+        </div>
+    </div>`;
+    });
+
+    let notesElm = document.getElementById('notes');
+    if (notesObj.length != 0) {
+        notesElm.innerHTML = html;
+    }
+    else {
+        notesElm.innerHTML = `Nothing to show`;
+    }
+}
+
+function myfun(){
+    var userconfirmation = confirm("Do you really want to add this to your private notes");
+    if(userconfirmation == true){
+        window.open("http://127.0.0.1:5500/PrivateS.html#");
+        return true;
+    }
+}
+
+function deleteNote(index) {
+    let notes = localStorage.getItem("notes");
+    if (notes == null) {
+        notesObj = [];
+    }
+    else {
+        notesObj = JSON.parse(notes);
+    }
+
+    notesObj.splice(index, 1);
+    localStorage.setItem("notes", JSON.stringify(notesObj));
+    showNotes();
+}
+
+let search = document.getElementById('searchTxt');
+search.addEventListener("input", function () {
+    let inputVal = search.value.toLowerCase();
+    let noteCards = document.getElementsByClassName('noteCard');
+    Array.from(noteCards).forEach(function (element) {
+        let cardTxt = element.getElementsByTagName("p")[0].innerHTML;
+        if (cardTxt.includes(inputVal)) {
+            element.style.display = "block";
+        }
+        else {
+            element.style.display = "none";
+        }
+    })
+})
